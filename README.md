@@ -57,7 +57,7 @@ Add the following to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/loopwork/URITemplate.git", from: "1.1.0")
+    .package(url: "https://github.com/mattt/URITemplate.git", from: "1.1.0")
 ]
 ```
 
@@ -152,6 +152,7 @@ do {
 
 ## License
 
-Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
+This project is available under the MIT license.
+See the LICENSE file for more info.
 
 [rfc6570]: https://datatracker.ietf.org/doc/html/rfc6570
