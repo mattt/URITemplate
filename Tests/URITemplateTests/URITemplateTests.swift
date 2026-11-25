@@ -338,6 +338,20 @@ struct Level4Tests {
         #expect(result == "val")
     }
 
+    @Test("Path prefix after an exploded list (RFC 6570 section 3.2.6)")
+    func pathPrefixAfterExplodedList() throws {
+        let template = try URITemplate("{/list*,path:4}")
+        let result = template.expand(with: ["list": ["red", "green", "blue"], "path": "/foo/bar"])
+        #expect(result == "/red/green/blue/%2Ffoo")
+    }
+
+    @Test("Prefix length counts Unicode code points")
+    func prefixLengthCountsUnicodeCodePoints() throws {
+        let template = try URITemplate("{var:1}")
+        #expect(template.expand(with: ["var": "🐈x"]) == "%F0%9F%90%88")
+        #expect(template.expand(with: ["var": "e\u{301}x"]) == "e")
+    }
+
     @Test("Prefix modifier longer than string")
     func prefixModifierLongerThanString() throws {
         let template = try URITemplate("{var:30}")

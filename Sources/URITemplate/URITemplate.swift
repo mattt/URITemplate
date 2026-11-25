@@ -74,25 +74,14 @@ private struct VariableSpec: Sendable {
         }
     }
 
-    private func expandString(_ string: String, with operator: Operator) -> String? {
-        // For path expansion, empty strings should still contribute a path segment
-        if string.isEmpty {
-            switch `operator` {
-            case .path:
-                return ""
-            case .simple, .reserved, .fragment, .label:
-                return ""
-            case .pathStyle, .query, .queryContinuation:
-                // Empty strings should still be included for these operators
-                let encoded = `operator`.encodeValue(string)
-                return `operator`.formatVariable(name: name, value: encoded)
-            }
+    private func expandString(_ string: String, with operator: Operator) -> String {
+        let value: String
+        if case .prefix(let maxLength) = modifier {
+            value = String(string.unicodeScalars.prefix(maxLength))
+        } else {
+            value = string
         }
-
-        let encoded = `operator`.encodeValue(string)
-        let truncated = applyModifier(encoded)
-
-        return `operator`.formatVariable(name: name, value: truncated)
+        return `operator`.formatVariable(name: name, value: `operator`.encodeValue(value))
     }
 
     private func expandList(_ items: [String], with operator: Operator) -> String? {
@@ -128,16 +117,6 @@ private struct VariableSpec: Sendable {
                 return "\(encodedKey),\(encodedValue)"
             }.joined(separator: ",")
             return `operator`.formatVariable(name: name, value: joined)
-        }
-    }
-
-    private func applyModifier(_ value: String) -> String {
-        guard let modifier = modifier else { return value }
-        switch modifier {
-        case .prefix(let maxLength):
-            return String(value.prefix(maxLength))
-        case .explode:
-            return value
         }
     }
 }
